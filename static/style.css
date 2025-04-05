@@ -62,7 +62,7 @@ label {
 }
 
 input, select {
-    width: 100%;
+    width: 80vb;
     padding: 8px;
     margin-top: 5px;
 }

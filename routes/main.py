@@ -15,8 +15,21 @@ def index():
     if request.method == "POST":
         action = form_data.get("action")
         try:
-            metraz = float(form_data["metraz"])
-            metraz = max(0, min(metraz, 150))  # omezíme rozsah
+            try:
+                metraz = float(form_data["metraz"])
+                if metraz < 0 or metraz > 150:
+                    current_app.logger.warning(f"[PREDIKCE] Metraz mimo rozsah: {metraz}")
+                metraz = max(0, min(metraz, 150))  # omezíme rozsah
+            except ValueError:
+                flash("Zadejte platné číslo pro metráž (0–150 m²).")
+                current_app.logger.warning(f"[PREDIKCE] Neplatný vstup pro metráž: {form_data.get('metraz')}")
+                return render_template(
+                    "index.html",
+                    prediction=None,
+                    location_mapping=app.location_mapping,
+                    form_data=form_data,
+                    comparison_table=[]
+                )
 
             rozloha = form_data["rozloha"]
             energeticka = form_data["energeticka"]
@@ -87,6 +100,10 @@ def index():
 
                 comparison_table.sort(key=lambda x: x["predikovana_cena"])
 
+        except ValueError:
+            flash("Zadejte platné číslo pro metráž.")
+            current_app.logger.warning(f"[PREDIKCE] Neplatná metráž: {form_data.get('metraz')}")
+            return render_template("index.html", ...)
         except Exception as e:
             app.logger.exception("[INDEX] Neočekávaná chyba:")
 

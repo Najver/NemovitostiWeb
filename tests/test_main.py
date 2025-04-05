@@ -30,11 +30,22 @@ def login_user(client, username="predikceuser", password="test1234"):
 
     return user_id
 
+def test_invalid_metraz_type(client):
+    response = client.post("/", data={
+        "metraz": "das",
+        "rozloha": "3+kk",
+        "energeticka": "C",
+        "stav": "Po rekonstrukci",
+        "lokalita": "Praha",
+        "action": "predikce"
+    }, follow_redirects=True)
+    html = response.data.decode("utf-8")
+    assert "zadejte platné číslo pro metráž (0–150 m²)" in html.lower()
 
 def test_invalid_dispozice(client):
     response = client.post("/", data={
         "metraz": 60,
-        "rozloha": "6+kk",
+        "rozloha": "-50",
         "energeticka": "C",
         "stav": "Po rekonstrukci",
         "lokalita": "Praha",
@@ -56,6 +67,29 @@ def test_invalid_energeticka(client):
     html = response.data.decode("utf-8")
     assert "neplatná energetická" in html.lower()
 
+def test_invalid_stav(client):
+    response = client.post("/", data={
+        "metraz": 60,
+        "rozloha": "2+kk",
+        "energeticka": "A",
+        "stav": "-50",
+        "lokalita": "Praha",
+        "action": "predikce"
+    }, follow_redirects=True)
+    html = response.data.decode("utf-8")
+    assert "neplatný stav" in html.lower()
+
+def test_invalid_lokalita(client):
+    response = client.post("/", data={
+        "metraz": 60,
+        "rozloha": "2+kk",
+        "energeticka": "A",
+        "stav": "Po rekonstrukci",
+        "lokalita": "64fa",
+        "action": "predikce"
+    }, follow_redirects=True)
+    html = response.data.decode("utf-8")
+    assert "neplatná lokalita" in html.lower()
 
 def test_ulozit_predikci(client):
     user_id = login_user(client)
@@ -69,7 +103,6 @@ def test_ulozit_predikci(client):
     }, follow_redirects=True)
     assert response.status_code == 200
 
-    # Ověření v DB
     with flask_app.app_context():
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
@@ -85,7 +118,6 @@ def test_ulozit_predikci(client):
 def test_moje_predikce(client):
     user_id = login_user(client)
 
-    # Vložíme jednu predikci napřímo
     with flask_app.app_context():
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -105,7 +137,6 @@ def test_moje_predikce(client):
 def test_smazat_predikci(client):
     user_id = login_user(client)
 
-    # Uložíme testovací predikci
     with flask_app.app_context():
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -117,11 +148,9 @@ def test_smazat_predikci(client):
         conn.commit()
         conn.close()
 
-    # Odešleme žádost o smazání
     response = client.get(f"/smazat-predikci/{pred_id}", follow_redirects=True)
     assert response.status_code == 200
 
-    # Ověříme, že záznam zmizel
     with flask_app.app_context():
         conn = get_db_connection()
         cursor = conn.cursor()

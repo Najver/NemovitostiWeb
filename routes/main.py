@@ -99,11 +99,6 @@ def index():
                 app.logger.info(f"[SROVNÁNÍ] Vygenerováno {len(comparison_table)} řádků pro srovnání.")
 
                 comparison_table.sort(key=lambda x: x["predikovana_cena"])
-
-        except ValueError:
-            flash("Zadejte platné číslo pro metráž.")
-            current_app.logger.warning(f"[PREDIKCE] Neplatná metráž: {form_data.get('metraz')}")
-            return render_template("index.html", ...)
         except Exception as e:
             app.logger.exception("[INDEX] Neočekávaná chyba:")
 

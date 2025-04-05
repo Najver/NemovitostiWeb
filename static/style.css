@@ -1,0 +1,177 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f8f8f8;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #2c3e50;
+    padding: 15px 30px;
+    color: white;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.nav-left,
+.nav-right {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.nav-left a{
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.nav-right a,
+.nav-right .user {
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.nav-right .user {
+    margin-right: 10px;
+    font-style: italic;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+main {
+    max-width: 90vb;
+    margin: 30px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+label {
+    display: block;
+    margin-top: 15px;
+}
+
+input, select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+}
+
+button {
+    margin-top: 1em;
+    padding: 10px;
+    background: #385b78;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1em;
+}
+
+th, td {
+    padding: 0.5em;
+    border: 1px solid #ccc;
+    text-align: left;
+}
+
+th {
+    background-color: #f5f5f5;
+}
+
+.result {
+    margin-top: 20px;
+    font-size: 1.2em;
+    color: #385b78;
+}
+
+.container {
+    max-width: 500px;
+    margin: auto;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+.error-message {
+    color: red;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.info-message {
+    color: black;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.prediction-box,
+.comparison-container {
+    padding: 1em;
+    margin-top: 2em;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+}
+
+.levnejsi {
+    background-color: #e6ffe6;
+}
+
+.drazsi {
+    background-color: #ffe6e6;
+}
+
+.hypo-link {
+    display: inline-block;
+    padding: 10px 15px;
+    background-color: #385b78;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.delete-btn {
+    display: inline-block;
+    padding: 6px 12px;
+    background-color: #e74c3c;
+    color: white;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.delete-btn:hover {
+    background-color: #c0392b;
+}
+
+.save-btn {
+    display: inline-block;
+    margin-top: 1em;
+    padding: 8px 14px;
+    background-color: #385b78;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}

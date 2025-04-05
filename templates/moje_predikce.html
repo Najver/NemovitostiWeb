@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Moje predikce{% endblock %}
+
+{% block content %}
+<h2>Moje uložené predikce</h2>
+
+{% if predikce %}
+    <table>
+        <thead>
+            <tr>
+                <th>Metráž</th>
+                <th>Dispozice</th>
+                <th>Energetická</th>
+                <th>Stav</th>
+                <th>Lokalita</th>
+                <th>Predikovaná cena</th>
+                <th>Datum</th>
+                <th>Akce</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in predikce %}
+            <tr>
+                <td>{{ p.metraz }} m²</td>
+                <td>{{ p.rozloha }}</td>
+                <td>{{ p.energeticka }}</td>
+                <td>{{ p.stav }}</td>
+                <td>{{ p.lokalita }}</td>
+                <td>{{ "{:,.0f}".format(p.cena).replace(",", " ") }} Kč</td>
+                <td>{{ p.created_at.strftime("%d.%m.%Y %H:%M") }}</td>
+                <td>
+                    <a href="{{ url_for('main.smazat_predikci', predikce_id=p.id) }}"
+                       class="delete-btn"
+                       onclick="return confirm('Opravdu chceš tuto predikci smazat?')">
+                       Smazat
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>Nemáš zatím uložené žádné predikce.</p>
+{% endif %}
+{% endblock %}

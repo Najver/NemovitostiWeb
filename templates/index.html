@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}Predikce ceny nemovitosti{% endblock %}
+
+{% block content %}
+<h1>Odhad ceny nemovitosti</h1>
+
+<form method="POST">
+    <label>Metráž (m²):</label>
+    <input type="number" name="metraz" min="0" max="150" required value="{{ form_data.get('metraz', '') }}">
+
+    <label>Dispozice:</label>
+    <select name="rozloha">
+        {% for val in ['1+kk', '2+kk', '3+kk', '4+kk', '5+kk'] %}
+            <option value="{{ val }}" {% if form_data.get('rozloha') == val %}selected{% endif %}>{{ val }}</option>
+        {% endfor %}
+    </select>
+
+    <label>Energetická náročnost:</label>
+    <select name="energeticka">
+        {% for val in ['A', 'B', 'C', 'D', 'E', 'F', 'G'] %}
+            <option value="{{ val }}" {% if form_data.get('energeticka') == val %}selected{% endif %}>{{ val }}</option>
+        {% endfor %}
+    </select>
+
+    <label>Stav:</label>
+    <select name="stav">
+        {% for val in ['Novostavba', 'Po rekonstrukci', 'Ve velmi dobrém stavu', 'V dobrém stavu', 'Před rekonstrukcí'] %}
+            <option value="{{ val }}" {% if form_data.get('stav') == val %}selected{% endif %}>{{ val }}</option>
+        {% endfor %}
+    </select>
+
+    <label>Lokalita (kraj):</label>
+    <select name="lokalita">
+        {% for nazev in location_mapping.keys() %}
+            <option value="{{ nazev }}" {% if form_data.get('lokalita') == nazev %}selected{% endif %}>{{ nazev }}</option>
+        {% endfor %}
+    </select>
+
+    <button type="submit" name="action" value="predikce">Spočítat cenu</button>
+    <button type="submit" name="action" value="srovnani">Srovnej ceny podle krajů</button>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="flash-messages">
+          {% for message in messages %}
+            <div class="error-message">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+</form>
+
+{% if prediction and session.username %}
+    <form method="POST" action="{{ url_for('main.ulozit_predikci') }}">
+        <input type="hidden" name="metraz" value="{{ form_data.get('metraz') }}">
+        <input type="hidden" name="rozloha" value="{{ form_data.get('rozloha') }}">
+        <input type="hidden" name="energeticka" value="{{ form_data.get('energeticka') }}">
+        <input type="hidden" name="stav" value="{{ form_data.get('stav') }}">
+        <input type="hidden" name="lokalita" value="{{ form_data.get('lokalita') }}">
+        <input type="hidden" name="cena" value="{{ prediction }}">
+        <button type="submit" class="save-btn">Uložit predikci</button>
+    </form>
+{% endif %}
+
+{% if prediction %}
+    <div class="prediction-box">
+        <h2>Odhadovaná cena:</h2>
+        <p><strong>{{ "{:,.0f}".format(prediction).replace(",", " ") }} Kč</strong></p>
+        <a href="{{ url_for('hypoteka.hypoteka', cena=prediction)}}" class="hypo-link">Spočítat hypotéku na tuto nemovitost</a>
+    </div>
+{% endif %}
+
+{% if comparison_table %}
+    <div class="comparison-container">
+        <h2>Srovnání cen podle krajů</h2>
+
+        <button id="export-csv-btn">Exportovat jako CSV</button>
+
+        <table id="comparison-table">
+            <thead>
+                <tr>
+                    <th>Kraj</th>
+                    <th>Predikovaná cena</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in comparison_table %}
+                    <tr class="{% if row.predikovana_cena < prediction %}levnejsi{% elif row.predikovana_cena > prediction %}drazsi{% endif %}">
+                        <td>{{ row.lokalita }}</td>
+                        <td>{{ "{:,.0f}".format(row.predikovana_cena).replace(",", " ") }} Kč</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='scripts/index.js') }}"></script>
+{% endblock %}
+

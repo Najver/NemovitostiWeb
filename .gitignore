@@ -1,0 +1,4 @@
+.venv
+logs
+node_modules
+.idea

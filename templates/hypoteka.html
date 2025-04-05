@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Výpočet hypotéky{% endblock %}
+
+{% block content %}
+<h1>Výpočet měsíční splátky hypotéky</h1>
+
+{% if cena_predikce %}
+    <p>Odhadovaná cena nemovitosti (z AI): <strong>{{ "{:,.0f}".format(cena_predikce).replace(",", " ") }} Kč</strong></p>
+{% endif %}
+
+<form method="POST" data-cena="{{ cena_predikce }}">
+    {% if cena_predikce %}
+        <label>Vaše vlastní prostředky (v Kč):</label>
+        <input type="number" name="vlastni" required value="{{ form_data.get('vlastni', '') }}">
+        {% set vlastni_float = form_data.get('vlastni', 0) | float %}
+        {% set uver = cena_predikce - vlastni_float %}
+
+        <input type="hidden" name="uver" value="{{ uver }}">
+        <p>Výše úvěru: <strong>{{ "{:,.0f}".format(uver).replace(",", " ") }} Kč</strong></p>
+    {% else %}
+
+        <label>Výše úvěru (v Kč):</label>
+        <input type="number" name="uver" required value="{{ form_data.get('uver', '') }}">
+    {% endif %}
+
+    <!-- Fixace -->
+    <label>Fixace úrokové sazby:</label>
+    <select id="fixace" name="fixace" data-selected="{{ form_data.get('fixace', '5') }}">
+    </select>
+
+    <label>Úroková sazba (% ročně):</label>
+    <input type="number" step="0.01" name="urok" id="urok" required value="{{ form_data.get('urok', '') }}">
+
+    <label>Doba splácení (v měsících):</label>
+    <input type="number" name="mesice" id="mesice" required value="{{ form_data.get('mesice', '') }}">
+
+    <!-- Zprávy -->
+    <div id="chyba" class="error-message"></div>
+    <div id="info" class="info-message"></div>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="flash-messages">
+          {% for message in messages %}
+            <div>{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <button type="submit">Spočítat splátku</button>
+</form>
+
+{% if splatka %}
+    <div class="result">
+        <p>Měsíční splátka: <strong>{{ "{:,.2f}".format(splatka).replace(",", " ") }} Kč</strong></p>
+        <p>Celkem zaplatíte: <strong>{{ "{:,.2f}".format(total).replace(",", " ") }} Kč</strong></p>
+    </div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='scripts/hypoteka.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,18 @@
+{
+  "host": "127.0.0.1",
+  "port": 3020,
+  "debug": true,
+
+  "model_path": "models/neural_model.keras",
+  "scaler_path": "models/scaler.pkl",
+  "location_mapping_path": "models/location_mapping.pkl",
+  "energy_mapping_path": "models/energy_mapping.pkl",
+  "condition_mapping_path": "models/condition_mapping.pkl",
+  "logger_file_path": "logs/app.log",
+
+  "db_host": "def",
+  "db_user": "def",
+  "db_password": "def",
+  "db_name": "def",
+  "secret_key": "def"
+}

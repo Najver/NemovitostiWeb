@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Nemovitosti{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    {% block head_scripts %}{% endblock %}
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="nav-left">
+                <a href="/">Odhad ceny</a>
+                <a href="/hypoteka">Výpočet hypotéky</a>
+            </div>
+            <div class="nav-right">
+                {% if session.username %}
+                    <<a href="{{ url_for('main.moje_predikce') }}">Moje predikce</a>
+                    <a href="{{ url_for('hypoteka.moje_vypocty') }}">Hystorie výpočtů</a>
+                    <span class="user">Přihlášen jako {{ session.username }}</span>
+                    <a href="{{ url_for('auth.logout') }}">Odhlásit se</a>
+                {% else %}
+                    <a href="{{ url_for('auth.login') }}">Přihlásit</a>
+                    <a href="{{ url_for('auth.register') }}">Registrovat</a>
+                {% endif %}
+            </div>
+        </nav>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

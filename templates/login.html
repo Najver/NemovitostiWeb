@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Přihlášení{% endblock %}
+{% block content %}
+<h2>Přihlášení</h2>
+<form method="POST">
+    <label>Uživatelské jméno:</label>
+    <input type="text" name="username" required>
+    <label>Heslo:</label>
+    <input type="password" name="password" required>
+    <button type="submit">Přihlásit</button>
+</form>
+{% for msg in get_flashed_messages() %}
+    <p style="color:red">{{ msg }}</p>
+{% endfor %}
+{% endblock %}

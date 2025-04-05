@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Moje výpočty{% endblock %}
+
+{% block content %}
+<h2>Moje hypotéky</h2>
+
+{% if historie %}
+    <table>
+        <thead>
+            <tr>
+                <th>Úvěr (Kč)</th>
+                <th>Sazba (%)</th>
+                <th>Počet měsíců</th>
+                <th>Splátka (Kč)</th>
+                <th>Celkem (Kč)</th>
+                <th>Datum</th>
+                <th>Akce</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for radek in historie %}
+            <tr>
+                <td>{{ "{:,.0f}".format(radek.uver).replace(",", " ") }}</td>
+                <td>{{ radek.sazba }}</td>
+                <td>{{ radek.mesice }}</td>
+                <td>{{ "{:,.2f}".format(radek.splatka).replace(",", " ") }}</td>
+                <td>{{ "{:,.2f}".format(radek.total).replace(",", " ") }}</td>
+                <td>{{ radek.created_at.strftime("%d.%m.%Y %H:%M") }}</td>
+                <td>
+                    <a href="{{ url_for('hypoteka.smazat_vypocet', vypocet_id=radek.id) }}"
+                       class="delete-btn"
+                       onclick="return confirm('Opravdu chceš tento výpočet smazat?')">
+                       Smazat
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>Nemáš zatím žádné uložené výpočty.</p>
+{% endif %}
+{% endblock %}

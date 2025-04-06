@@ -2,9 +2,11 @@ import mysql.connector
 import json
 from flask import current_app
 
+# nacteni dat z configu
 with open("config.json", "r") as f:
     config = json.load(f)
 
+# funkce na pripojeni k databazi
 def get_db_connection():
     try:
         conn = mysql.connector.connect(

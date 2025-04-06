@@ -1,6 +1,7 @@
+
+// automaticky prepisuje pole metraz na hodnoty od 0 do 150
 document.addEventListener("DOMContentLoaded", function () {
     const metrazInput = document.querySelector('input[name="metraz"]');
-
     if (metrazInput) {
         metrazInput.addEventListener("input", function () {
             let value = parseFloat(this.value);
@@ -13,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-//export tabulky do CSV
+// export tabulky do CSV
 function exportTableToCSV() {
     const table = document.getElementById("comparison-table");
     if (!table) return;

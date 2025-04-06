@@ -1,5 +1,6 @@
 import pandas as pd
 
+#funkce na predikci ceny
 def predict_price(app, metraz, rozloha_text, energeticka_text, stav_text, lokalita_text):
     try:
         rozloha = int(''.join(filter(str.isdigit, rozloha_text)))
@@ -11,6 +12,7 @@ def predict_price(app, metraz, rozloha_text, energeticka_text, stav_text, lokali
             app.logger.warning(f"[MAPOVÁNÍ] Chybějící hodnota: energeticka={energeticka}, stav={stav}, lokalita={lokalita}")
             return None
 
+        # vlozeni dat do data framu
         input_data = pd.DataFrame([{
             "metraz": metraz / 10,
             "rozloha": rozloha,

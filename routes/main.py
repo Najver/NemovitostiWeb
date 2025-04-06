@@ -15,11 +15,12 @@ def index():
     if request.method == "POST":
         action = form_data.get("action")
         try:
+            # ohlidani vstupu backendu
             try:
                 metraz = float(form_data["metraz"])
                 if metraz < 0 or metraz > 150:
                     current_app.logger.warning(f"[PREDIKCE] Metraz mimo rozsah: {metraz}")
-                metraz = max(0, min(metraz, 150))  # omezíme rozsah
+                metraz = max(0, min(metraz, 150))
             except ValueError:
                 flash("Zadejte platné číslo pro metráž (0–150 m²).")
                 current_app.logger.warning(f"[PREDIKCE] Neplatný vstup pro metráž: {form_data.get('metraz')}")
@@ -36,7 +37,7 @@ def index():
             stav = form_data["stav"]
             lokalita = form_data["lokalita"]
 
-            # Validace hodnot
+            # validace hodnot podle map
             valid_dispozice = ['1+kk', '2+kk', '3+kk', '4+kk', '5+kk']
             valid_energie = list(app.energy_mapping.keys())
             valid_stavy = list(app.condition_mapping.keys())
@@ -65,6 +66,7 @@ def index():
             app.logger.info(
                 f"[FORMULÁŘ] metraz={metraz}, rozloha={rozloha}, energeticka={energeticka}, stav={stav}, lokalita={lokalita}")
 
+            # predikce podle zadanych hodnot
             prediction = predict_price(
                 app=app,
                 metraz=metraz,
@@ -74,9 +76,11 @@ def index():
                 lokalita_text=lokalita
             )
 
+
             if prediction is None:
                 app.logger.warning("[PREDIKCE] Predikce selhala nebo vrací None.")
 
+            # predikce vsech lokalit pro srovnani
             if action == "srovnani":
                 for nazev_lokalita, kod in app.location_mapping.items():
                     if nazev_lokalita == lokalita:
@@ -110,7 +114,7 @@ def index():
         comparison_table=comparison_table
     )
 
-#routy na predikce mazani,ulozeni a nacteni na stranku
+# routy na predikce mazani,ulozeni a nacteni na stranku
 @main_routes.route("/ulozit-predikci", methods=["POST"])
 def ulozit_predikci():
     if "user_id" not in session:
@@ -119,6 +123,7 @@ def ulozit_predikci():
     form_data = request.form
     cena = request.form.get("cena", type=float)
 
+    # ulozeni predikce do databaze
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -145,6 +150,7 @@ def ulozit_predikci():
         return redirect(url_for("main.index"))
 
 @main_routes.route("/moje-predikce")
+# pokud je uzivatel prihlasen nacita ulozene predikce z databaze danneho uzivatele
 def moje_predikce():
     if "user_id" not in session:
         return redirect(url_for("auth.login"))
@@ -166,6 +172,7 @@ def moje_predikce():
         return render_template("moje_predikce.html", predikce=[])
 
 @main_routes.route("/smazat-predikci/<int:predikce_id>")
+# pokud je uzivatel prihlasen maze ulozene predikce z databaze danneho uzivatele
 def smazat_predikci(predikce_id):
     if "user_id" not in session:
         return redirect(url_for("auth.login"))

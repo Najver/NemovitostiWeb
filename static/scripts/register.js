@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const confirmInput = document.getElementById("confirm_password");
     const errorBox = document.getElementById("form-error");
 
+    // validace formulare
     form.addEventListener("submit", function (e) {
         errorBox.textContent = "";
 
@@ -13,7 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const confirm = confirmInput.value;
 
         let errors = [];
-
         if (!username) {
             errors.push("Uživatelské jméno nesmí být prázdné.");
         }

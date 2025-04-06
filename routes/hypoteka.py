@@ -14,6 +14,7 @@ def hypoteka():
 
     if request.method == "POST":
         try:
+            # ohlidani vstupu backendu
             if cena_predikce:
                 vlastni = float(request.form["vlastni"])
                 if vlastni < 0:
@@ -53,7 +54,7 @@ def hypoteka():
                     f"[HYPOTEKA] Fixace delší než splácení | fixace: {fixace} let, měsíce: {mesice}")
                 return redirect(url_for("hypoteka.hypoteka", cena=cena_predikce))
 
-            # Výpočet splátky
+            # vypocet splatky
             r = (urok / 100) / 12
             splatka = uver * r / (1 - (1 + r) ** -mesice) if r > 0 else uver / mesice
             total = splatka * mesice
@@ -62,7 +63,7 @@ def hypoteka():
                 f"[HYPOTEKA] Výpočet OK | úvěr: {uver} Kč | úrok: {urok}% | splátky: {mesice} měs. | splatka: {round(splatka, 2)} Kč"
             )
 
-            #ulozeni hypoteky do historie jestli je uzivatel prihlaseny
+            # ulozeni hypoteky do historie jestli je uzivatel prihlaseny
             if "user_id" in session:
                 try:
                     conn = get_db_connection()
@@ -94,6 +95,7 @@ def hypoteka():
 #routy na mazani historie hypotek a vypsani na stranku
 @hypoteka_routes.route("/moje-vypocty")
 def moje_vypocty():
+    # jestli je uzivatel prihlasen nacita historii hypotek z databaze danneho uaivatele
     if "user_id" not in session:
         return redirect(url_for("auth.login"))
 
@@ -116,6 +118,7 @@ def moje_vypocty():
 
 @hypoteka_routes.route("/smazat-vypocet/<int:vypocet_id>")
 def smazat_vypocet(vypocet_id):
+    # jestli je uzivatel prihlasen smaze historii hypotek z databaze danneho uaivatele
     if "user_id" not in session:
         return redirect(url_for("auth.login"))
 

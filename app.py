@@ -17,7 +17,7 @@ with open("config.json", "r") as f:
 app = Flask(__name__)
 app.secret_key = config.get("secret_key", "tajny_klic")
 
-# === Logger ===
+# inicializace loggeru
 log_formatter = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s')
 log_file = config.get("logger_file_path")
 

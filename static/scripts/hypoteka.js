@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let sazbyFixace = {};
 
+    // nacteni dat z jsonu fixnich sazeb
     fetch("/static/data/sazby.json")
         .then(response => response.json())
         .then(data => {
@@ -32,7 +33,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
 
-    //nastaveni sazny podle fixace
+    // nastaveni sazby podle fixace
     if (fixaceSelect && urokInput) {
         fixaceSelect.addEventListener("change", function () {
             const novaFixace = this.value;
@@ -49,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    //validace formulare
+    // validace formulare
     if (form) {
         const cenaPredikce = parseFloat(form.dataset.cena || 0);
 

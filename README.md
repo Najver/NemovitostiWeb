@@ -1,10 +1,13 @@
 # John's Estate Assistant
+
 A smart real estate assistant that predicts property prices using AI, calculates mortgage installments, allows user account management, and stores historical predictions. Built with Flask, MySQL, and a neural network model.
 
 ## Overview
+
 John's Estate Assistant is an intelligent web-based tool that helps users estimate the price of properties based on their parameters, calculate mortgage payments, compare prices across regions, and manage their predictions—all in a smooth and intuitive interface.
 
 ### Key Features
+
 AI-Based Property Price Prediction (Neural Network with Keras)
 
 Price Comparison by Region (Kraj)
@@ -21,6 +24,7 @@ Export of price comparisons to CSV
 
 
 ### Technologies Used
+
 Backend: Python 3.12, Flask, Flask Blueprints
 
 Frontend: HTML5, CSS3, Vanilla JS
@@ -85,7 +89,9 @@ View and delete past predictions
 Save mortgage calculations (planned)
 
 ### Requirements
+
 Python Environment
+
 Python 3.12+
 
 MySQL Server (with a user + database created)
@@ -93,12 +99,18 @@ MySQL Server (with a user + database created)
 Pip for installing dependencies
 
 ### Installation
+
 [git clone https://github.com/your-username/johns-estate-assistant.git](https://github.com/Najver/NemovitostiWeb)
 cd NemovitostiWeb
+
 python -m venv .venv
+
 .venv\Scripts\activate
+
 pip install -r requirements.txt
+
 ### Setup
+
 Make sure your MySQL DB is running and configured.
 
 Update config.json with correct model paths and DB config.
@@ -106,16 +118,22 @@ Update config.json with correct model paths and DB config.
 Run the application:
 
 python app.py
+
 Then visit your configured port (http://127.0.0.1:3020)
 
 ### Running Tests
+
 coverage run -m pytest
+
 coverage report
 
 ### AI Model Notes
+
 The trained Keras model is stored in models/, and mappings for location, energy efficiency, and property condition are serialized via pickle. The predictor.py handles loading and predicting.
 
 ### Author
+
 Created by a student for an educational project.
+
 This assistant was built with the goal to combine AI with real-world real estate needs in the Czech Republic.
 

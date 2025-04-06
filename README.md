@@ -115,7 +115,7 @@ coverage report
 ### AI Model Notes
 The trained Keras model is stored in models/, and mappings for location, energy efficiency, and property condition are serialized via pickle. The predictor.py handles loading and predicting.
 
-🧑‍💻 Author
+### Author
 Created by a student for an educational project.
 This assistant was built with the goal to combine AI with real-world real estate needs in the Czech Republic.
 

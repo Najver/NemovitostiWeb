@@ -41,18 +41,31 @@ Other Tools: pickle, json, requirements.txt, config.json
 
 ### Project Structure
 johns-estate-assistant/
+
 ├── app.py                     # Flask app entry point
+
 ├── config.json                # Application configuration
+
 ├── db.py                      # MySQL connection logic
+
 ├── logs/                      # Log output directory
+
 ├── models/                    # AI model and scalers (saved)
+
 ├── routes/                    # Flask Blueprints (main, auth, hypoteka)
+
 ├── static/                    # CSS, JS, JSON data
+
 ├── templates/                 # HTML templates (Jinja2)
+
 ├── tests/                     # Unit tests
+
 ├── utils/                     # AI predictor logic
+
 ├── .coverage                  # Coverage data
+
 ├── requirements.txt           # Python dependencies
+
 └── README.md                  # This file
 
 ### Example Functionalities

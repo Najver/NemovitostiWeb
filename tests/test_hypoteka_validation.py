@@ -79,3 +79,36 @@ def test_vlastni_vice_nez_cena(client):
     }, follow_redirects=True)
     html = response.data.decode("utf-8")
     assert "nemusíte si brát hypotéku" in html.lower()
+
+def test_uver_necislo(client):
+    login_test_user(client)
+    response = client.post("/hypoteka", data={
+        "uver": "abc",
+        "urok": 5.5,
+        "mesice": 120,
+        "fixace": "5"
+    }, follow_redirects=True)
+    html = response.data.decode("utf-8")
+    assert "zadejte platné číselné hodnoty" in html.lower()
+
+def test_urok_necislo(client):
+    login_test_user(client)
+    response = client.post("/hypoteka", data={
+        "uver": 1000000,
+        "urok": "x",
+        "mesice": 120,
+        "fixace": "5"
+    }, follow_redirects=True)
+    html = response.data.decode("utf-8")
+    assert "zadejte platné číselné hodnoty" in html.lower()
+
+def test_mesice_necislo(client):
+    login_test_user(client)
+    response = client.post("/hypoteka", data={
+        "uver": 1000000,
+        "urok": 5,
+        "mesice": "xx",
+        "fixace": "5"
+    }, follow_redirects=True)
+    html = response.data.decode("utf-8")
+    assert "zadejte platné číselné hodnoty" in html.lower()

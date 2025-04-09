@@ -80,7 +80,7 @@ def hypoteka():
 
         except ValueError as ve:
             flash("Zadejte platné číselné hodnoty.")
-            current_app.logger.warning(f"[HYPOTEKA] Chybný vstup: {str(e)}")
+            current_app.logger.warning(f"[HYPOTEKA] Chybný vstup: {str(ve)}")
             return redirect(url_for("hypoteka.hypoteka", cena=cena_predikce))
         except Exception as e:
             app.logger.exception("[HYPOTÉKA] Neočekávaná chyba při výpočtu:")

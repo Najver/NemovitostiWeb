@@ -1,152 +1,239 @@
-# John's Estate Assistant
+# John's Estate Assistant — Projektová dokumentace
 
-A smart real estate assistant that predicts property prices using AI, calculates mortgage installments, allows user account management, and stores historical predictions. Built with Flask, MySQL, and a neural network model.
+---
 
-## Overview
+## Úvod
 
-John's Estate Assistant is an intelligent web-based tool that helps users estimate the price of properties based on their parameters, calculate mortgage payments, compare prices across regions, and manage their predictions—all in a smooth and intuitive interface.
+**John's Estate Assistant** je webová aplikace postavená na Pythonu (Flask), která slouží k predikci cen nemovitostí pomocí umělé inteligence, výpočtu hypoték, správě historie a registraci uživatelů.
 
-### Key Features
+Aplikace využívá neuronovou síť, která byla natrénována na reálných datech z českého realitního trhu.
 
-AI-Based Property Price Prediction (Neural Network with Keras)
+---
 
-Price Comparison by Region (Kraj)
+## Cíle projektu
 
-Mortgage Calculator (with fixations and rates from real data)
+- Predikce cen nemovitostí na základě parametrů (dispozice, metráž, lokalita, stav, energetická náročnost)
+    
+- Výpočet měsíční splátky hypotéky
+    
+- Ukládání historie výpočtů a predikcí
+    
+- Uživatelské účty a správa
+    
+- Backend i frontend validace
+    
+- Logging, testování a pokrytí kódu
+    
 
-Custom-trained model on Czech real estate data
+---
 
-User registration and login
+## Použité technologie
 
-Prediction and mortgage history saving per user
+|Oblast|Nástroje|
+|---|---|
+|Backend|Python 3.12, Flask|
+|Frontend|HTML5, CSS3, Vanilla JS|
+|AI / ML|TensorFlow (Keras), pandas, pickle|
+|Databáze|MySQL|
+|Testování|Pytest, coverage|
+|Logging|logging (UTF-8, do souboru `logs/`)|
+|Ostatní|Blueprinty, JSON, Bootstrap (volitelně)|
 
-Export of price comparisons to CSV
+---
+
+### Ai
+
+Cílem bylo vytvořit **regresní model**, který na základě údajů o nemovitosti **predikuje její přibližnou cenu** (v Kč). Model byl natrénován na reálných datech z českého trhu.
+
+Použitý model:
+
+Model byl vytvořen a trénován pomocí **Keras** (součást knihovny TensorFlow).
+### Vstupní parametry modelu
+
+Každá nemovitost je popsána následujícími číselnými parametry:
+
+|Parametr|Popis|
+|---|---|
+|`metraz`|Výměra bytu v metrech čtverečních (normalizováno /10)|
+|`rozloha`|Počet místností (např. `3+kk` → `3`)|
+|`energeticka_narocnost`|Hodnota A–G převedená na čísla 1–7|
+|`stav`|Stav nemovitosti (před rekonstrukcí → novostavba: 1–5)|
+|`lokalita`|Číselná reprezentace kraje (každý kraj má své ID)|
+
+> Tyto hodnoty jsou mapovány pomocí `*.pkl` souborů a scaleru.
 
 
-### Technologies Used
+---
+## Struktura projektu
 
-Backend: Python 3.12, Flask, Flask Blueprints
+omegaNemovitosti/
+├── app.py                  # Inicializace Flask aplikace
+├── config.json             # Konfigurace (port, modely, DB)
+├── db.py                   # Připojení k databázi (MySQL)
+├── logs/                   # Logy (logování výjimek, přístupů)
+├── models/                 # Uložené AI modely a scaler
+├── routes/                 # Flask routy (main.py, hypoteka.py, auth.py)
+├── static/                 # JS, CSS, JSON s úroky
+├── templates/              # HTML šablony (Jinja2)
+├── tests/                  # Testovací jednotky (Pytest)
+├── utils/                  # AI predikční logika
+└── requirements.txt        # Seznam závislostí
 
-Frontend: HTML5, CSS3, Vanilla JS
+---
 
-AI Model: TensorFlow (Keras), trained neural network
+## Popis jednotlivých částí
 
-Database: MySQL
+### `app.py`
 
-Testing: pytest, coverage
+- Načítá model a scalery
+    
+- Registruje routy
+    
+- Nastavuje logger
+    
+- Spouští aplikaci
+    
 
-Logging: Python’s logging module with UTF-8 output
+### `routes/`
 
-Other Tools: pickle, json, requirements.txt, config.json
+- `main.py` – formulář na predikci, uložení, srovnání
+    
+- `hypoteka.py` – výpočet hypotéky
+    
+- `auth.py` – registrace, login, logout
+    
 
-### Project Structure
-johns-estate-assistant/
+### `utils/predictor.py`
 
-├── app.py                     # Flask app entry point
+- Převod vstupních dat na numerický formát
+    
+- Normalizace pomocí scaleru
+    
+- Výstup predikované ceny v Kč
+    
 
-├── config.json                # Application configuration
+### `templates/`
 
-├── db.py                      # MySQL connection logic
+- `index.html`, `hypoteka.html`, `moje_predikce.html`, `login.html`, `register.html`
+    
+- Stylizované přes `style.css`
+    
 
-├── logs/                      # Log output directory
+### `static/scripts/`
 
-├── models/                    # AI model and scalers (saved)
+- Validace formulářů na frontend
+    
+- Dynamická práce s úrokovou sazbou podle fixace
+    
+- Export CSV tabulky
+    
 
-├── routes/                    # Flask Blueprints (main, auth, hypoteka)
+---
 
-├── static/                    # CSS, JS, JSON data
+## Databázové schéma
 
-├── templates/                 # HTML templates (Jinja2)
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) UNIQUE,
+    password_hash VARCHAR(128),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
-├── tests/                     # Unit tests
+CREATE TABLE prediction_history (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    metraz FLOAT,
+    rozloha VARCHAR(10),
+    energeticka VARCHAR(5),
+    stav VARCHAR(50),
+    lokalita VARCHAR(100),
+    cena FLOAT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
 
-├── utils/                     # AI predictor logic
+CREATE TABLE hypoteka_history (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    uver FLOAT,
+    urok FLOAT,
+    mesice INT,
+    fixace INT,
+    vlastni FLOAT,
+    splatka FLOAT,
+    total FLOAT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
 
-├── .coverage                  # Coverage data
+---
 
-├── requirements.txt           # Python dependencies
+## Konfigurace (`config.json`)
 
-└── README.md                  # This file
+{
+  "host": "127.0.0.1",
+  "port": 3020,
+  "debug": true,
 
-### Example Functionalities
-Predict property price by specifying:
+  "model_path": "models/neural_model.keras",
+  "scaler_path": "models/scaler.pkl",
+  "location_mapping_path": "models/location_mapping.pkl",
+  "energy_mapping_path": "models/energy_mapping.pkl",
+  "condition_mapping_path": "models/condition_mapping.pkl",
+  "logger_file_path": "logs/app.log",
 
-Area (0–150 m²)
+  "db_host": "sql.daniellinda.net",
+  "db_user": "remote",
+  "db_password": "hm3C4iLL+",
+  "db_name": "omega_poloch",
+  "secret_key": "superSECRET"
+}
 
-Layout (1+kk to 5+kk)
+---
 
-Energy class (A–G)
+## Spuštění projektu
 
-Condition (new, renovated, etc.)
-
-Region (kraj)
-
-Calculate a mortgage based on:
-
-Loan amount or own capital
-
-Fixation length (1–30 years)
-
-Automatically applied interest rate
-
-Validation of logic between fixations and loan duration
-
-Account features:
-
-Register/login/logout
-
-Save selected predictions
-
-View and delete past predictions
-
-Save mortgage calculations (planned)
-
-### Requirements
-
-Python Environment
-
-Python 3.12+
-
-MySQL Server (with a user + database created)
-
-Pip for installing dependencies
-
-### Installation
-
-[git clone https://github.com/your-username/johns-estate-assistant.git](https://github.com/Najver/NemovitostiWeb)
-cd NemovitostiWeb
-
+1. Naklonuj repozitář
+    
+2. Vytvoř a aktivuj virtuální prostředí
+    
 python -m venv .venv
-
 .venv\Scripts\activate
 
+3. Nainstaluj závislosti:
+    
 pip install -r requirements.txt
 
-### Setup
+4. v projektu(root slozce) zalozit slozku logs a v ni soubor app.log
 
-Make sure your MySQL DB is running and configured.
+logs/app.log
 
-Update config.json with correct model paths and DB config.
-
-Run the application:
+5. spustit samotnou aplikaci
 
 python app.py
 
-Then visit your configured port (http://127.0.0.1:3020)
+---
 
-### Running Tests
+## Testování
+
+Spuštění testů:
+
+pytest
+
+S pokrytím:
 
 coverage run -m pytest
 
 coverage report
 
-### AI Model Notes
+---
+### Linky
 
-The trained Keras model is stored in models/, and mappings for location, energy efficiency, and property condition are serialized via pickle. The predictor.py handles loading and predicting.
+web - https://github.com/Najver/NemovitostiWeb
 
-### Author
+cista data - https://github.com/Najver/dataNaOmegu
 
-Created by a student for an educational project.
+crawler - https://github.com/Najver/crawlerNaOmegu
 
-This assistant was built with the goal to combine AI with real-world real estate needs in the Czech Republic.
-
+### chat
+chat delal nejake html a stylovani
